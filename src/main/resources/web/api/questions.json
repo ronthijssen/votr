@@ -1,0 +1,9 @@
+{
+    "title": "Favorite coffee?",
+    "options": [
+        "Americano",
+        "Espresso",
+        "Cappucino",
+        "Latte"
+    ]
+}
