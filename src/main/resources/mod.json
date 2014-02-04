@@ -1,0 +1,7 @@
+{
+
+  // Java verticle
+  "main":"nl.jpoint.votr.MainVerticle",
+  "auto-redeploy": true
+
+}
