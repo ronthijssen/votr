@@ -42,3 +42,76 @@ votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Que
         });
 
     }]);
+
+
+votrControllers.controller('ReportCtrl', ['$scope', '$routeParams', 'reportPoller',
+    function ($scope, $routeParams, reportPoller) {
+
+        $scope.options = ["Pie", "Doughnut" ]
+        $scope.graph = "Doughnut";
+
+
+        $scope.colors = [ "#F7464A", "#E2EAE9" , "#D4CCC5" , "#949FB1", "#4D5360"];
+
+
+        reportPoller.startPolling($routeParams.talkId, function (Report) {
+
+            var answers = _.map(Report.answers, function (answer, index) {
+                return {
+                    value: parseInt(answer.result),
+                    color: $scope.colors[index]
+                };
+
+            });
+            ;
+            console.log(answers);
+
+
+//            [
+//                {
+//                    value: 30,
+//                    color: "#F7464A"
+//                },
+//                {
+//                    value: 50,
+//                    color: "#E2EAE9"
+//                },
+//                {
+//                    value: 100,
+//                    color: "#D4CCC5"
+//                },
+//                {
+//                    value: 40,
+//                    color: "#949FB1"
+//                },
+//                {
+//                    value: 120,
+//                    color: "#4D5360"
+//                }
+//
+//            ]
+
+            $scope.MyChart = {
+                width: 200,
+                height: 200,
+                options: {},
+                data: answers
+            }
+
+            console.log($scope.MyChart);
+
+        }), function () {
+
+            $scope.waiting = true;
+            console.log('404')
+        };
+
+
+        $scope.selectGraph = function (graph) {
+            $scope.graph = graph;
+        }
+
+
+    }
+])
+;
