@@ -1,7 +1,9 @@
 package nl.jpoint.votr.service;
 
 import nl.jpoint.votr.model.Answer;
+import nl.jpoint.votr.verticle.MongoVerticle;
 import org.vertx.java.core.Vertx;
+import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
 
@@ -16,7 +18,11 @@ public class AnswerService {
     }
 
     public void saveAnswer(Answer answer) {
-        // TODO: send eventbus request to mongo verticle.
+        // fire-and-forget.
+        JsonObject query = new JsonObject();
+        query.putString("action", "saveAnswer");
+        query.putObject("data", answer.asJsonObject());
+        vertx.eventBus().send(MongoVerticle.MONGO_VERTICLE_BUS_ADDRESS, query);
     }
 
 }

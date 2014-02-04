@@ -31,7 +31,6 @@ public class StateVerticle extends Verticle {
                 for (String talk : talks) {
                     JsonObject activeQuestion = body.getObject(talk);
                     questions.put(talk, activeQuestion.encode());
-
                 }
             }
         });
