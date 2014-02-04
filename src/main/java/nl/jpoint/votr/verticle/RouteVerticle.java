@@ -46,11 +46,6 @@ public class RouteVerticle extends Verticle {
             }
         });
 
-//        routeMatcher.get("/api/admin/showanswers/:talkId", new Handler<HttpServerRequest>() {
-//            public void handle(HttpServerRequest req) {
-//                new ShowAnswersHandler(vertx, container).handle(req);
-//            }
-//        });
 
         routeMatcher.noMatch(new Handler<HttpServerRequest>() {
             public void handle(HttpServerRequest req) {
