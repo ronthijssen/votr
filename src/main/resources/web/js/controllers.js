@@ -3,14 +3,14 @@
 /* Controllers */
 var votrControllers = angular.module('votrControllers', []);
 
-votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Question', 'Answer',
-    function ($scope, $routeParams, Question, Answer) {
+votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Question', 'Answer', 'questionPoller',
+    function ($scope, $routeParams, Question, Answer, questionPoller) {
 
         $scope.waiting = true;
         $scope.talkId = $routeParams.talkId;
 
 
-        $scope.Question = Question.get({talkId: $scope.talkId}, function (Question) {
+        questionPoller.startPolling($scope.talkId, function (Question) {
 
             if (Question.status == 'QUESTION') {
                 $scope.waiting = false;
