@@ -6,6 +6,7 @@ import java.util.Map;
 import nl.jpoint.votr.model.Question;
 import nl.jpoint.votr.model.QuestionStatus;
 import org.vertx.java.core.http.HttpServerRequest;
+import org.vertx.java.core.http.HttpServerResponse;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
@@ -23,17 +24,34 @@ public class RequestGetHandler {
         questions.put("JPoint", new Question(2L, "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
     }
 
+    /**
+     * Handles the incoming HTTP Request, which represents a query for the current question for given talkId.
+     * @param httpRequest the HTTP request.
+     * @param talkId the id of the talk the question is requested for.
+     */
     public void handle(HttpServerRequest httpRequest, String talkId) {
-        final JsonObject response;
-        if (questions.containsKey(talkId)) {
-            response = questions.get(talkId).asJsonObject();
+        if (talkExists(talkId)) {
+            respondWithCurrentQuestionForTalk(httpRequest.response(), talkId);
         } else {
-            response = buildNoAvailableQuestion();
+            respondForUnknownTalk(httpRequest.response());
         }
-        httpRequest.response().end(response.encode());
     }
 
-    private JsonObject buildNoAvailableQuestion() {
-        return new JsonObject().putString("status", QuestionStatus.WAITING.name());
+    private boolean talkExists(final String talkId) {
+        return questions.containsKey(talkId);
     }
+
+    private void respondWithCurrentQuestionForTalk(final HttpServerResponse response, final String talkId) {
+        response.end(currentQuestionForTalk(talkId).asObject().encode());
+    }
+
+    private JsonObject currentQuestionForTalk(final String talkId) {
+        return questions.get(talkId).asJsonObject();
+    }
+
+    private void respondForUnknownTalk(final HttpServerResponse response) {
+        response.setStatusCode(404).end();
+    }
+
+
 }
