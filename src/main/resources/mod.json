@@ -1,5 +1,6 @@
 {
 
-  "main":"nl.jpoint.votr.verticle.VerticleRunner"
+    "main": "nl.jpoint.votr.verticle.VerticleRunner",
+    "auto-redeploy": true
 
 }

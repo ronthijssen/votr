@@ -20,6 +20,3 @@ questionServices.factory('Answer', ['$resource',
         });
     }]);
 
-
-
-
