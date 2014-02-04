@@ -18,7 +18,7 @@ questionServices.factory('Answer', ['$resource',
         });
     }]);
 
-questionServices.factory('Answer', ['$resource',
+questionServices.factory('Report', ['$resource',
     function ($resource) {
         return $resource('api/admin/showanswers/:talkId', {}, {
             query: {method: 'GET', params: { talkId: '@talkId'}, isArray: false}
@@ -45,14 +45,14 @@ questionServices.service('questionPoller', function (Question) {
 });
 
 
-questionServices.service('reportPoller', function (Answer) {
+questionServices.service('reportPoller', function (Report) {
     var defaultPollingTime = 2500;
     var poller;
 
     return {
         startPolling: function (talkId, callback) {
             poller = function () {
-                Answer.get({talkId: talkId}, callback);
+                Report.get({talkId: talkId}, callback);
             }
             poller();
             setInterval(poller, defaultPollingTime);
