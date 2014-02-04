@@ -1,5 +1,6 @@
 package nl.jpoint.votr.handler;
 
+import nl.jpoint.votr.model.Answer;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.http.HttpServerRequest;
@@ -9,7 +10,7 @@ import org.vertx.java.platform.Container;
 
 public class AnswerPostHandler implements Handler<Buffer> {
 
-    private Logger log;
+    private Logger            log;
     private HttpServerRequest httpRequest;
 
     public AnswerPostHandler(Container container, HttpServerRequest request) {
@@ -21,6 +22,12 @@ public class AnswerPostHandler implements Handler<Buffer> {
     public void handle(Buffer event) {
         JsonObject request = new JsonObject(event.toString());
         log.info("request:" + request);
+
+        int optionId = request.getInteger("optionId");
+        Answer answer =
+            new Answer(httpRequest.params().get("talkId"), Long.parseLong(httpRequest.params().get("questionId")),
+                optionId);
+        log.info("Answer: " + answer);
 
         // genereer response; kan ook via
         // messagebus of callback.

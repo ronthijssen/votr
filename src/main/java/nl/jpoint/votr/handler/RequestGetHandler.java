@@ -13,23 +13,28 @@ import org.vertx.java.platform.Container;
 
 public class RequestGetHandler {
 
-    private final Map<String, Question> questions = new HashMap<String, Question>();
+    private static int POLLER_COUNTER = 0;
 
-    private Logger log;
+    private final Map<String, Question> questions = new HashMap<>();
+    private final Logger log;
 
     public RequestGetHandler(Container container) {
         this.log = container.logger();
 
-        questions.put("devoxx", new Question(1L, "Which talk did you like the most.", "Geen", "Keynote", "Dart", "VertX"));
-        questions.put("JPoint", new Question(2L, "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
+        questions.put("devoxx",
+            new Question(1L, "devoxx", "Which talk did you like the most.", "Geen", "Keynote", "Dart", "VertX"));
+        questions.put("JPoint",
+            new Question(2L, "JPoint", "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
+        questions.put("poller", null);
     }
 
     /**
      * Handles the incoming HTTP Request, which represents a query for the current question for given talkId.
+     *
      * @param httpRequest the HTTP request.
-     * @param talkId the id of the talk the question is requested for.
      */
-    public void handle(HttpServerRequest httpRequest, String talkId) {
+    public void handle(HttpServerRequest httpRequest) {
+        final String talkId = httpRequest.params().get("talkId");
         if (talkExists(talkId)) {
             respondWithCurrentQuestionForTalk(httpRequest.response(), talkId);
         } else {
@@ -42,16 +47,42 @@ public class RequestGetHandler {
     }
 
     private void respondWithCurrentQuestionForTalk(final HttpServerResponse response, final String talkId) {
-        response.end(currentQuestionForTalk(talkId).asObject().encode());
+        final Question question = currentQuestionForTalk(talkId);
+        final JsonObject responseObject;
+
+        if (question != null) {
+            responseObject = buildResponseForQuestion(question);
+        } else {
+            // Hardcoded hack to temporarily support polling
+            if (POLLER_COUNTER < 5) {
+                POLLER_COUNTER++;
+                responseObject = buildResponseForQuestion(null);
+            } else {
+                if (POLLER_COUNTER++ > 9) {
+                    POLLER_COUNTER = 0;
+                }
+                responseObject = buildResponseForQuestion(currentQuestionForTalk("devoxx"));
+            }
+        }
+        response.end(responseObject.encode());
     }
 
-    private JsonObject currentQuestionForTalk(final String talkId) {
-        return questions.get(talkId).asJsonObject();
+    private Question currentQuestionForTalk(final String talkId) {
+        return questions.get(talkId);
     }
 
     private void respondForUnknownTalk(final HttpServerResponse response) {
         response.setStatusCode(404).end();
     }
 
-
+    private JsonObject buildResponseForQuestion(final Question question) {
+        JsonObject response = new JsonObject();
+        if (question == null) {
+            response.putString("status", QuestionStatus.WAITING.name());
+        } else {
+            response.putString("status", QuestionStatus.QUESTION.name());
+            response.putObject("question", question.asJsonObject());
+        }
+        return response;
+    }
 }

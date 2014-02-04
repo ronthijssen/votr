@@ -10,9 +10,9 @@ public class Question {
 
     private final JsonObject jsonObject = new JsonObject();
 
-    public Question(final long id, final String title, final String... options) {
+    public Question(final long id, final String talkId, final String title, final String... options) {
         jsonObject.putNumber("id", id);
-        jsonObject.putString("status", QuestionStatus.QUESTION.name());
+        jsonObject.putString("talkId", talkId);
         jsonObject.putString("title", title);
         jsonObject.putArray("options", optionsToJsonArray(options));
     }
