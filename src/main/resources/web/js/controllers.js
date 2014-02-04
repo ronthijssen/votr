@@ -1,20 +1,18 @@
 'use strict';
 
 /* Controllers */
-
 var votrControllers = angular.module('votrControllers', []);
 
-votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Question',
-    function ($scope, $routeParams, Question) {
-        $scope.Question = Question.get(function (Question) {
-            console.log(Question);
+votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Question', 'Answer',
+    function ($scope, $routeParams, Question, Answer) {
+        $scope.Question = Question.get({talkId: $routeParams.talkId}, function (Question) {
             $scope.title = Question.title;
             $scope.options = Question.options;
             $scope.selected = -1;
         });
 
         $scope.select = function (index) {
+            Answer.save({}, { index: index});
             $scope.selected = index;
         }
-
     }]);
