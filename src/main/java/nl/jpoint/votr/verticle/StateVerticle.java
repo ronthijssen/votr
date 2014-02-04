@@ -20,7 +20,6 @@ public class StateVerticle extends Verticle {
         EventBus eb = vertx.eventBus();
         eb.registerHandler(UPDATE_ACTIVE_QUESTION_BUS_ADDRESS, new Handler<Message>() {
             public void handle(Message message) {
-                container.logger().info("Received message - updating active question data.");
                 final Map<String, String> questions = vertx.sharedData().getMap(ACTIVE_QUESTION_DATA);
 
                 JsonObject body = (JsonObject) message.body();

@@ -74,12 +74,10 @@ public class MongoVerticle extends Verticle {
                 query.put("talkId", talkId);
                 query.put("id", questionId);
                 DBObject questionData = questions.findOne(query);
-                log.info("retrieved question: " + questionData.toString());
-
 
                 JsonObject questionObj = new JsonObject();
-
                 questionObj.putObject(talkId, new JsonObject(questionData.toString()));
+
                 vertx.eventBus().send(StateVerticle.UPDATE_ACTIVE_QUESTION_BUS_ADDRESS, questionObj);
             }
         });

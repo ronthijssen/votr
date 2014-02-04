@@ -12,7 +12,6 @@ import org.vertx.java.platform.Container;
 
 public class GetQuestionHandler {
 
-    private static int POLLER_COUNTER = 0;
 
     private final Logger          log;
     private final QuestionService questionService;
@@ -44,21 +43,9 @@ public class GetQuestionHandler {
         final Question question = currentQuestionForTalk(talkId);
         final JsonObject responseObject;
 
-        if (question != null) {
-            responseObject = buildResponseForQuestion(question);
-        } else {
-            // Hardcoded hack to temporarily support polling
-            if (POLLER_COUNTER < 5) {
-                POLLER_COUNTER++;
-                responseObject = buildResponseForQuestion(null);
-            } else {
-                if (POLLER_COUNTER++ > 9) {
-                    POLLER_COUNTER = 0;
-                }
-                responseObject = buildResponseForQuestion(currentQuestionForTalk("devoxx"));
-            }
-        }
+        responseObject = buildResponseForQuestion(question);
         response.end(responseObject.encode());
+
     }
 
     private Question currentQuestionForTalk(final String talkId) {

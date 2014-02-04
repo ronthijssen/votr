@@ -22,10 +22,8 @@ public class QuestionService {
 
     public Question getActiveQuestion(String talkId) {
         final Map<String, String> questions = vertx.sharedData().getMap(StateVerticle.ACTIVE_QUESTION_DATA);
-
         String activeQuestion = questions.get(talkId);
 
-        log.info("getActiveQuestion: activeQuestion: " + activeQuestion);
         if (activeQuestion == null || activeQuestion.isEmpty()) {
             return null;
         }
