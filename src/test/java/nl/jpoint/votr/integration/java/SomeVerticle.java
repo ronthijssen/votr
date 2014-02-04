@@ -1,4 +1,4 @@
-package vertxtest.integration.java;
+package nl.jpoint.votr.integration.java;
 /*
  * Copyright 2013 Red Hat, Inc.
  *

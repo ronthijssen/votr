@@ -1,4 +1,4 @@
-package vertxtest.integration.java;
+package nl.jpoint.votr.integration.java;
 /*
  * Copyright 2013 Red Hat, Inc.
  *
@@ -17,18 +17,12 @@ package vertxtest.integration.java;
  * @author <a href="http://tfox.org">Tim Fox</a>
  */
 
-import org.junit.Ignore;
+import org.junit.Test;
 import org.vertx.testtools.TestVerticle;
 
-/**
- * Example Java integration test that deploys the module that this project builds.
- *
- * Quite often in integration tests you want to deploy the same module for all tests and you don't want tests
- * to start before the module has been deployed.
- *
- * This test demonstrates how to do that.
- */
-@Ignore
+import static org.vertx.testtools.VertxAssert.testComplete;
+
+
 public class ModuleIntegrationTest extends TestVerticle {
 
 //  @Test
@@ -50,11 +44,11 @@ public class ModuleIntegrationTest extends TestVerticle {
 //    });
 //  }
 //
-//  @Test
-//  public void testSomethingElse() {
-//    // Whatever
-//    testComplete();
-//  }
+  @Test
+  public void testSomethingElse() {
+    // Whatever
+    testComplete();
+  }
 //
 //
 //  @Override
