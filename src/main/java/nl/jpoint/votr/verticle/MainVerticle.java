@@ -1,5 +1,7 @@
-package nl.jpoint.votr;
+package nl.jpoint.votr.verticle;
 
+import nl.jpoint.votr.handler.AnswerGetHandler;
+import nl.jpoint.votr.handler.AnswerPostHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServer;
 import org.vertx.java.core.http.HttpServerRequest;
@@ -29,11 +31,17 @@ public class MainVerticle extends Verticle {
 
         RouteMatcher routeMatcher = new RouteMatcher();
 
-		routeMatcher.get("/test", new Handler<HttpServerRequest>() {
-		    public void handle(HttpServerRequest req) {
-		        req.response().end("Hello World! (vertx)");
-		    }
-		});
+        routeMatcher.get("/api/question/1", new Handler<HttpServerRequest>() {
+            public void handle(HttpServerRequest req) {
+                new AnswerGetHandler(container).handle(req);
+            }
+        });
+
+        routeMatcher.post("/api/answer/1", new Handler<HttpServerRequest>() {
+            public void handle(final HttpServerRequest req) {
+                req.bodyHandler(new AnswerPostHandler(container, req));
+            }
+        });
 
         routeMatcher.noMatch(new Handler<HttpServerRequest>() {
             public void handle(HttpServerRequest req) {

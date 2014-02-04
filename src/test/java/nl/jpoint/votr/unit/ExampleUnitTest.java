@@ -1,6 +1,6 @@
 package nl.jpoint.votr.unit;
 
-import nl.jpoint.votr.MainVerticle;
+import nl.jpoint.votr.verticle.MainVerticle;
 import org.junit.Test;
 
 public class ExampleUnitTest {

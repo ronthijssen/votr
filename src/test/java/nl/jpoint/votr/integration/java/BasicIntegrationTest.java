@@ -1,6 +1,6 @@
 package nl.jpoint.votr.integration.java;
 
-import nl.jpoint.votr.MainVerticle;
+import nl.jpoint.votr.verticle.MainVerticle;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
