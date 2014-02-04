@@ -19,8 +19,8 @@ public class RequestGetHandler {
     public RequestGetHandler(Container container) {
         this.log = container.logger();
 
-        questions.put("devoxx", new Question("Which talk did you like the most.", "Geen", "Keynote", "Dart", "VertX"));
-        questions.put("JPoint", new Question("Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
+        questions.put("devoxx", new Question(1L, "Which talk did you like the most.", "Geen", "Keynote", "Dart", "VertX"));
+        questions.put("JPoint", new Question(2L, "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
     }
 
     public void handle(HttpServerRequest httpRequest, String talkId) {
