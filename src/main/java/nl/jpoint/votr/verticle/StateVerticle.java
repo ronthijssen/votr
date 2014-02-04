@@ -1,6 +1,5 @@
 package nl.jpoint.votr.verticle;
 
-import nl.jpoint.votr.model.Question;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.EventBus;
 import org.vertx.java.core.eventbus.Message;
@@ -22,9 +21,7 @@ public class StateVerticle extends Verticle {
         eb.registerHandler(UPDATE_ACTIVE_QUESTION_BUS_ADDRESS, new Handler<Message>() {
             public void handle(Message message) {
                 container.logger().info("Received message - updating active question data.");
-
                 final Map<String, String> questions = vertx.sharedData().getMap(ACTIVE_QUESTION_DATA);
-                questions.clear();
 
                 JsonObject body = (JsonObject) message.body();
                 Set<String> talks = body.getFieldNames();
@@ -32,23 +29,14 @@ public class StateVerticle extends Verticle {
                     JsonObject activeQuestion = body.getObject(talk);
                     if (activeQuestion != null) {
                         questions.put(talk, activeQuestion.encode());
+                    } else {
+                        // Leegmaken.
+                        questions.put(talk, "");
                     }
                 }
             }
         });
-
-        // Temporarily mock the questions
-        initiallyMockQuestions();
     }
-
-    private void initiallyMockQuestions() {
-        JsonObject mockQuestions = new JsonObject();
-        mockQuestions.putObject("devoxx", new Question(1L, "Which talk did you like the most.", "None", "Keynote", "Dart", "VertX").asJsonObject());
-        mockQuestions.putObject("JPoint", new Question(2L, "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte").asJsonObject());
-        mockQuestions.putObject("poller", null);
-        vertx.eventBus().send(UPDATE_ACTIVE_QUESTION_BUS_ADDRESS, mockQuestions);
-    }
-
 
 }
 

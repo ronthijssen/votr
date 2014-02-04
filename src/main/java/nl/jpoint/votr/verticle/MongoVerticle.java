@@ -5,6 +5,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import nl.jpoint.votr.model.Question;
+import nl.jpoint.votr.service.QuestionService;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.EventBus;
 import org.vertx.java.core.eventbus.Message;
@@ -13,6 +15,10 @@ import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Verticle;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MongoVerticle extends Verticle {
 
@@ -47,6 +53,7 @@ public class MongoVerticle extends Verticle {
                 JsonObject data = query.getObject("data");
                 switch (action) {
                     case "saveAnswer": saveAnswer(data); break;
+                    case "setActiveQuestion": setActiveQuestion(data); break;
                     default: break;
                 }
             }
@@ -58,6 +65,23 @@ public class MongoVerticle extends Verticle {
                 answerData.putAll(data.toMap());
                 answers.insert(answerData);
             }
+
+            private void setActiveQuestion(JsonObject data) {
+                String talkId = data.getString("talkId");
+                Integer questionId = Integer.valueOf(data.getString("questionId"));
+                DBCollection questions = db.getCollection("questions");
+                DBObject query = new BasicDBObject();
+                query.put("talkId", talkId);
+                query.put("id", questionId);
+                DBObject questionData = questions.findOne(query);
+                log.info("retrieved question: " + questionData.toString());
+
+
+                JsonObject questionObj = new JsonObject();
+
+                questionObj.putObject(talkId, new JsonObject(questionData.toString()));
+                vertx.eventBus().send(StateVerticle.UPDATE_ACTIVE_QUESTION_BUS_ADDRESS, questionObj);
+            }
         });
 
     }
@@ -66,7 +90,35 @@ public class MongoVerticle extends Verticle {
     private void insertMockQuestions(DB db) {
         DBCollection questionsCollection = db.getCollection("questions");
 
-        // TODO: implement.
+        Map<String, List<Question>> allQuestions = new HashMap<>();
+
+        List<Question> devoxxQuestions = new ArrayList<>();
+        devoxxQuestions.add(new Question(1L, "Which talk did you like the most?", "None", "Keynote", "Dart", "VertX"));
+        devoxxQuestions.add(new Question(2L, "Which Devoxx is the best?", "Belgium", "UK", "France"));
+        allQuestions.put("devoxx", devoxxQuestions);
+
+        List<Question> jpointQuestions = new ArrayList<>();
+        jpointQuestions.add(new Question(1L, "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
+        jpointQuestions.add(new Question(2L, "Best day of the week?", "Monday", "Tuesday", "Wednesday"));
+        allQuestions.put("JPoint", jpointQuestions);
+
+        for (String talkId : allQuestions.keySet()) {
+            List<Question> questionsForTalk = allQuestions.get(talkId);
+            for (Question question : questionsForTalk) {
+                DBObject dbObject = new BasicDBObject();
+                dbObject.putAll(question.asJsonObject().toMap());
+                dbObject.put("talkId", talkId);
+                questionsCollection.insert(dbObject);
+            }
+        }
+
+        // Set initial talk statuses.
+        QuestionService questionService = new QuestionService(vertx, container);
+
+        for (String talkId : allQuestions.keySet()) {
+            questionService.clearActiveQuestion(talkId);
+        }
+
     }
 
 }

@@ -1,7 +1,9 @@
 package nl.jpoint.votr.verticle;
 
 import nl.jpoint.votr.handler.AnswerPostHandler;
-import nl.jpoint.votr.handler.RequestGetHandler;
+import nl.jpoint.votr.handler.ClearQuestionHandler;
+import nl.jpoint.votr.handler.GetQuestionHandler;
+import nl.jpoint.votr.handler.SelectQuestionHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServer;
 import org.vertx.java.core.http.HttpServerRequest;
@@ -22,13 +24,25 @@ public class RouteVerticle extends Verticle {
 
         routeMatcher.get("/api/question/:talkId", new Handler<HttpServerRequest>() {
             public void handle(HttpServerRequest req) {
-                new RequestGetHandler(vertx, container).handle(req);
+                new GetQuestionHandler(vertx, container).handle(req);
             }
         });
 
         routeMatcher.post("/api/answer/:talkId/:questionId", new Handler<HttpServerRequest>() {
             public void handle(final HttpServerRequest req) {
                 req.bodyHandler(new AnswerPostHandler(vertx, container, req));
+            }
+        });
+
+        routeMatcher.get("/api/admin/selectquestion/:talkId/:questionId", new Handler<HttpServerRequest>() {
+            public void handle(HttpServerRequest req) {
+                new SelectQuestionHandler(vertx, container).handle(req);
+            }
+        });
+
+        routeMatcher.get("/api/admin/clearquestion/:talkId", new Handler<HttpServerRequest>() {
+            public void handle(HttpServerRequest req) {
+                new ClearQuestionHandler(vertx, container).handle(req);
             }
         });
 

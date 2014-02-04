@@ -10,14 +10,14 @@ import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
 
-public class RequestGetHandler {
+public class GetQuestionHandler {
 
     private static int POLLER_COUNTER = 0;
 
     private final Logger          log;
     private final QuestionService questionService;
 
-    public RequestGetHandler(final Vertx vertx, final Container container) {
+    public GetQuestionHandler(final Vertx vertx, final Container container) {
         this.log = container.logger();
         this.questionService = new QuestionService(vertx, container);
     }
