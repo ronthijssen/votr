@@ -5,7 +5,7 @@
 var votr = angular.module('votr', ['ngRoute', 'votrControllers', 'questionService']).
     config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/', {templateUrl: 'partials/home.html' /* , controller: 'homeController' */});
-        $routeProvider.when('/questions', {templateUrl: 'partials/question.html', controller: 'QuestionDetailCtrl' });
+        $routeProvider.when('/questions/:talkId', {templateUrl: 'partials/question.html', controller: 'QuestionDetailCtrl' });
 
         $routeProvider.otherwise({redirectTo: '/'});
     }]);
