@@ -1,7 +1,7 @@
 <h2>Question: {{title}}</h2>
 
-<li ng-repeat="option in options"
-    class="">
-    {{option}}
-</li>
-
+<div class="list-group">
+    <li ng-click="select($index)" class="list-group-item {{selected == $index ? 'active' : ''}}" ng-repeat="option in options">
+        {{option}}
+    </li>
+</div>
