@@ -21,18 +21,19 @@ questionServices.factory('Answer', ['$resource',
 
 questionServices.service('questionPoller', function (Question) {
     var defaultPollingTime = 5000;
+    var poller;
 
     return {
         startPolling: function (talkId, callback) {
-            var poller = function () {
+            poller = function () {
                 Question.get({talkId: talkId}, callback);
             }
             poller();
             setInterval(poller, defaultPollingTime);
         },
 
-        stopPolling: function (name) {
-            clearInterval(polls[name]);
+        stopPolling: function () {
+            clearInterval(poller);
         }
     }
 });

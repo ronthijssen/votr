@@ -8,17 +8,18 @@ votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Que
 
         $scope.waiting = true;
         $scope.talkId = $routeParams.talkId;
-
+        $scope.lastQuestionId = 0;
 
         questionPoller.startPolling($scope.talkId, function (Question) {
 
-            if (Question.status == 'QUESTION') {
+            if (Question.status == 'QUESTION' && Question.question.id != $scope.lastQuestionId) {
                 $scope.waiting = false;
                 $scope.id = Question.question.id;
                 $scope.title = Question.question.title;
                 $scope.options = Question.question.options;
                 $scope.selected = 0;
-            } else if (Question.statis = 'WAITING') {
+                $scope.lastQuestionId = Question.question.id;
+            } else if (Question.status == 'WAITING') {
 
                 $scope.waiting = true;
             }
@@ -35,4 +36,9 @@ votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Que
             Answer.save({talkId: $scope.talkId, questionId: questionId}, {optionId: answerId});
             $scope.selected = answerId;
         }
+
+        $scope.$on('$destroy', function iVeBeenDismissed() {
+            questionPoller.stopPolling();
+        });
+
     }]);
