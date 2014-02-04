@@ -6,15 +6,18 @@ var votrControllers = angular.module('votrControllers', []);
 votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Question', 'Answer',
     function ($scope, $routeParams, Question, Answer) {
         $scope.Question = Question.get({talkId: $routeParams.talkId}, function (Question) {
+            $scope.id = Question.id;
             $scope.title = Question.title;
             $scope.options = Question.options;
-            $scope.selected = -1;
+            $scope.selected = 0;
         }), function () {
             console.log('404')
         };
 
-        $scope.select = function (index) {
-            Answer.save({}, { index: index});
-            $scope.selected = index;
+        $scope.select = function (questionId, answerId) {
+            console.log(questionId, answerId);
+
+            Answer.save({}, { questionId: questionId, answerId: answerId});
+            $scope.selected = answerId;
         }
     }]);
