@@ -18,6 +18,12 @@ questionServices.factory('Answer', ['$resource',
         });
     }]);
 
+questionServices.factory('Answer', ['$resource',
+    function ($resource) {
+        return $resource('api/admin/showanswers/:talkId', {}, {
+            query: {method: 'GET', params: { talkId: '@talkId'}, isArray: false}
+        });
+    }]);
 
 questionServices.service('questionPoller', function (Question) {
     var defaultPollingTime = 5000;
@@ -27,6 +33,26 @@ questionServices.service('questionPoller', function (Question) {
         startPolling: function (talkId, callback) {
             poller = function () {
                 Question.get({talkId: talkId}, callback);
+            }
+            poller();
+            setInterval(poller, defaultPollingTime);
+        },
+
+        stopPolling: function () {
+            clearInterval(poller);
+        }
+    }
+});
+
+
+questionServices.service('reportPoller', function (Answer) {
+    var defaultPollingTime = 2500;
+    var poller;
+
+    return {
+        startPolling: function (talkId, callback) {
+            poller = function () {
+                Answer.get({talkId: talkId}, callback);
             }
             poller();
             setInterval(poller, defaultPollingTime);
