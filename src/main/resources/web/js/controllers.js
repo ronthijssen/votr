@@ -6,6 +6,7 @@ var votrControllers = angular.module('votrControllers', []);
 votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Question', 'Answer',
     function ($scope, $routeParams, Question, Answer) {
         $scope.Question = Question.get({talkId: $routeParams.talkId}, function (Question) {
+            $scope.id = Question.id;
             $scope.title = Question.title;
             $scope.options = Question.options;
             $scope.selected = 0;
@@ -14,6 +15,8 @@ votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Que
         };
 
         $scope.select = function (questionId, answerId) {
+            console.log(questionId, answerId);
+
             Answer.save({}, { questionId: questionId, answerId: answerId});
             $scope.selected = answerId;
         }
