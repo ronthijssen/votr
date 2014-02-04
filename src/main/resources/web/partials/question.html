@@ -6,7 +6,7 @@
     <h2>Question: {{title}}</h2>
 
     <div class="list-group">
-        <li ng-click="select(id, option.id)" class="list-group-item {{selected == option.id ? 'active' : ''}}"
+        <li ng-click="selected || select(id, option.id)" class="list-group-item {{selected == option.id ? 'active' : ''}}"
             ng-repeat="option in options">
             {{option.answer}}
         </li>
