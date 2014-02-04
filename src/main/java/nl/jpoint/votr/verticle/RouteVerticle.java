@@ -1,8 +1,7 @@
 package nl.jpoint.votr.verticle;
 
-import nl.jpoint.votr.handler.RequestGetHandler;
 import nl.jpoint.votr.handler.AnswerPostHandler;
-import nl.jpoint.votr.service.MongoService;
+import nl.jpoint.votr.handler.RequestGetHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServer;
 import org.vertx.java.core.http.HttpServerRequest;
@@ -30,12 +29,6 @@ public class RouteVerticle extends Verticle {
         routeMatcher.post("/api/answer/:talkId/:questionId", new Handler<HttpServerRequest>() {
             public void handle(final HttpServerRequest req) {
                 req.bodyHandler(new AnswerPostHandler(container, req));
-            }
-        });
-
-        routeMatcher.get("/api/mongotest", new Handler<HttpServerRequest>() {
-            public void handle(HttpServerRequest req) {
-                new MongoService(vertx, container).doTest(req);
             }
         });
 

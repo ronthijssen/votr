@@ -6,6 +6,7 @@ import org.vertx.java.platform.Verticle;
 public class VerticleRunner extends Verticle {
 
     public void start() {
+        container.deployVerticle(StateVerticle.class.getName(), new JsonObject());
         container.deployWorkerVerticle(MongoVerticle.class.getName(), new JsonObject());
         container.deployVerticle(RouteVerticle.class.getName(), new JsonObject());
     }

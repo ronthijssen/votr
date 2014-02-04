@@ -8,7 +8,11 @@ import org.vertx.java.core.json.JsonObject;
  */
 public class Question {
 
-    private final JsonObject jsonObject = new JsonObject();
+    private JsonObject jsonObject = new JsonObject();
+
+    public Question(JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
 
     public Question(final long id, final String talkId, final String title, final String... options) {
         jsonObject.putNumber("id", id);
