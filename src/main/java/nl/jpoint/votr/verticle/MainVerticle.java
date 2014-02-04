@@ -1,6 +1,6 @@
 package nl.jpoint.votr.verticle;
 
-import nl.jpoint.votr.handler.AnswerGetHandler;
+import nl.jpoint.votr.handler.RequestGetHandler;
 import nl.jpoint.votr.handler.AnswerPostHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServer;
@@ -31,9 +31,9 @@ public class MainVerticle extends Verticle {
 
         RouteMatcher routeMatcher = new RouteMatcher();
 
-        routeMatcher.get("/api/question/1", new Handler<HttpServerRequest>() {
+        routeMatcher.get("/api/question/:talkId", new Handler<HttpServerRequest>() {
             public void handle(HttpServerRequest req) {
-                new AnswerGetHandler(container).handle(req);
+                new RequestGetHandler(container).handle(req, req.params().get("talkId"));
             }
         });
 
@@ -60,7 +60,5 @@ public class MainVerticle extends Verticle {
         server.listen(SERVER_PORT);
 
     }
-
-
 
 }
