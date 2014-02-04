@@ -16,9 +16,9 @@ import org.vertx.java.platform.Verticle;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public class MongoVerticle extends Verticle {
 
@@ -28,9 +28,10 @@ public class MongoVerticle extends Verticle {
     public static final int DB_PORT = 27017;
 
     private MongoClient mongoClient;
+    private Logger log;
 
     public void start() {
-        final Logger log = container.logger();
+        log = container.logger();
 
         try {
             mongoClient = new MongoClient(DB_HOST, DB_PORT);
@@ -88,32 +89,25 @@ public class MongoVerticle extends Verticle {
     private void insertMockQuestions(DB db) {
         DBCollection questionsCollection = db.getCollection("questions");
 
-        Map<String, List<Question>> allQuestions = new HashMap<>();
+        List<Question> questions = new ArrayList<>();
+        questions.add(new Question(1L, "devoxx", "Which talk did you like the most?", "None", "Keynote", "Dart", "VertX"));
+        questions.add(new Question(2L, "devoxx", "Which Devoxx is the best?", "Belgium", "UK", "France"));
+        questions.add(new Question(1L, "JPoint", "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
+        questions.add(new Question(2L, "JPoint", "Best day of the week?", "Monday", "Tuesday", "Wednesday"));
 
-        List<Question> devoxxQuestions = new ArrayList<>();
-        devoxxQuestions.add(new Question(1L, "Which talk did you like the most?", "None", "Keynote", "Dart", "VertX"));
-        devoxxQuestions.add(new Question(2L, "Which Devoxx is the best?", "Belgium", "UK", "France"));
-        allQuestions.put("devoxx", devoxxQuestions);
 
-        List<Question> jpointQuestions = new ArrayList<>();
-        jpointQuestions.add(new Question(1L, "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
-        jpointQuestions.add(new Question(2L, "Best day of the week?", "Monday", "Tuesday", "Wednesday"));
-        allQuestions.put("JPoint", jpointQuestions);
+        Set<String> talkIds = new HashSet<>();
 
-        for (String talkId : allQuestions.keySet()) {
-            List<Question> questionsForTalk = allQuestions.get(talkId);
-            for (Question question : questionsForTalk) {
-                DBObject dbObject = new BasicDBObject();
-                dbObject.putAll(question.asJsonObject().toMap());
-                dbObject.put("talkId", talkId);
-                questionsCollection.insert(dbObject);
-            }
+        for (Question question : questions) {
+            DBObject dbObject = new BasicDBObject();
+            dbObject.putAll(question.asJsonObject().toMap());
+            questionsCollection.insert(dbObject);
+            talkIds.add(question.asJsonObject().getString("talkId"));
         }
 
         // Set initial talk statuses.
         QuestionService questionService = new QuestionService(vertx, container);
-
-        for (String talkId : allQuestions.keySet()) {
+        for (String talkId : talkIds) {
             questionService.clearActiveQuestion(talkId);
         }
 

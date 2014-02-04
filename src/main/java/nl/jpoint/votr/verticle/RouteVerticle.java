@@ -4,6 +4,7 @@ import nl.jpoint.votr.handler.AnswerPostHandler;
 import nl.jpoint.votr.handler.ClearQuestionHandler;
 import nl.jpoint.votr.handler.GetQuestionHandler;
 import nl.jpoint.votr.handler.SelectQuestionHandler;
+import nl.jpoint.votr.handler.ShowAnswersHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServer;
 import org.vertx.java.core.http.HttpServerRequest;
@@ -43,6 +44,12 @@ public class RouteVerticle extends Verticle {
         routeMatcher.get("/api/admin/clearquestion/:talkId", new Handler<HttpServerRequest>() {
             public void handle(HttpServerRequest req) {
                 new ClearQuestionHandler(vertx, container).handle(req);
+            }
+        });
+
+        routeMatcher.get("/api/admin/showanswers/:talkId", new Handler<HttpServerRequest>() {
+            public void handle(HttpServerRequest req) {
+                new ShowAnswersHandler(vertx, container).handle(req);
             }
         });
 
