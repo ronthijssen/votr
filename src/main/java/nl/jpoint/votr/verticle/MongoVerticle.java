@@ -94,6 +94,7 @@ public class MongoVerticle extends Verticle {
         questions.add(new Question(2L, "devoxx", "Which Devoxx is the best?", "Belgium", "UK", "France"));
         questions.add(new Question(1L, "JPoint", "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
         questions.add(new Question(2L, "JPoint", "Best day of the week?", "Monday", "Tuesday", "Wednesday"));
+        questions.add(new Question(3L, "JPoint", "Sushi or wok?", "Sushi", "Wok", "Burger king"));
 
 
         Set<String> talkIds = new HashSet<>();
