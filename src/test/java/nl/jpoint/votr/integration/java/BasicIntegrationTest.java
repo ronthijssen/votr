@@ -1,6 +1,6 @@
 package nl.jpoint.votr.integration.java;
 
-import nl.jpoint.votr.verticle.MainVerticle;
+import nl.jpoint.votr.verticle.RouteVerticle;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
@@ -58,7 +58,7 @@ public class BasicIntegrationTest extends TestVerticle {
   @Ignore
   public void testDeployArbitraryVerticle() {
     assertEquals("bar", "bar");
-    container.deployVerticle(MainVerticle.class.getName());
+    container.deployVerticle(RouteVerticle.class.getName());
   }
 
   @Test
