@@ -8,13 +8,13 @@ votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Que
         $scope.Question = Question.get({talkId: $routeParams.talkId}, function (Question) {
             $scope.title = Question.title;
             $scope.options = Question.options;
-            $scope.selected = -1;
+            $scope.selected = 0;
         }), function () {
             console.log('404')
         };
 
-        $scope.select = function (index) {
-            Answer.save({}, { index: index});
-            $scope.selected = index;
+        $scope.select = function (questionId, answerId) {
+            Answer.save({}, { questionId: questionId, answerId: answerId});
+            $scope.selected = answerId;
         }
     }]);
