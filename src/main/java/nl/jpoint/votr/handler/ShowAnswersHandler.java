@@ -35,27 +35,25 @@ public class ShowAnswersHandler {
         final String talkId = httpRequest.params().get("talkId");
         JsonObject response = new JsonObject();
 
-        Question currentQuestion = questionService.getActiveQuestion(talkId);
-        if (currentQuestion == null) {
+        Question activeQuestion = questionService.getActiveQuestion(talkId);
+        if (activeQuestion == null) {
             response.putString("status", QuestionStatus.WAITING.name());
             httpRequest.response().end(response.encode());
             return;
         }
+        response.putObject("question", activeQuestion.asJsonObject());
 
-        response.putObject("question", currentQuestion.asJsonObject());
 
         Map<String, Integer> answerCounts = new HashMap<>();
 
-
-        // mock answers.
-        JsonArray options = currentQuestion.asJsonObject().getArray("options");
-        for (Object optionObj : options) {
+        // For all answers, create a key in the map.
+        JsonArray questionOptions = activeQuestion.asJsonObject().getArray("options");
+        for (Object optionObj : questionOptions) {
             JsonObject questionOption = (JsonObject) optionObj;
             answerCounts.put(questionOption.getInteger("id").toString(), Integer.valueOf(0));
         }
 
-
-        // testcode.
+        // testcode -> to be refactored.
         MongoClient mongoClient;
         try {
             mongoClient = new MongoClient(MongoVerticle.DB_HOST, MongoVerticle.DB_PORT);
@@ -64,38 +62,29 @@ public class ShowAnswersHandler {
             return;
         }
 
-
-
         final DB db = mongoClient.getDB(MongoVerticle.DB_NAME);
         DBCollection answersColl = db.getCollection("answers");
         DBObject query = new BasicDBObject();
         query.put("talkId", talkId);
-        query.put("questionId", currentQuestion.asJsonObject().getInteger("id"));
+        query.put("questionId", activeQuestion.asJsonObject().getInteger("id"));
         DBCursor cursor = answersColl.find(query);
         while (cursor.hasNext()) {
-            DBObject current = cursor.next();
-            String optionId = current.get("optionId").toString();
-            log.info("found answer: " + current);
-            Integer answerCount = answerCounts.get(optionId);
-            answerCounts.put(optionId, answerCount+1);
+            DBObject currentAnswer = cursor.next();
+            String optionId = currentAnswer.get("optionId").toString();
+            answerCounts.put(optionId, answerCounts.get(optionId)+1);
         }
 
-
+        // Convert to Json.
         JsonArray answers = new JsonArray();
-        for (Object optionObj : options) {
-            JsonObject questionOption = (JsonObject) optionObj;
+        for (String optionId : answerCounts.keySet()) {
             JsonObject answer = new JsonObject();
-
-            answer.putString("id", questionOption.getInteger("id").toString());
-
-            answer.putString("result", Integer.toString(answerCounts.get(questionOption.getInteger("id").toString())));
+            answer.putString("id", optionId);
+            answer.putString("result", Integer.toString(answerCounts.get(optionId)));
             answers.add(answer);
         }
-
         response.putArray("answers", answers);
+
         httpRequest.response().end(response.encode());
-
-
     }
 
 }
