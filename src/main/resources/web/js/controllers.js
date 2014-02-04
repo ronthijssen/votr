@@ -7,9 +7,10 @@ votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Que
     function ($scope, $routeParams, Question, Answer) {
 
         $scope.waiting = true;
+        $scope.talkId = $routeParams.talkId;
 
 
-        $scope.Question = Question.get({talkId: $routeParams.talkId}, function (Question) {
+        $scope.Question = Question.get({talkId: $scope.talkId}, function (Question) {
 
             if (Question.status == 'QUESTION') {
                 $scope.waiting = false;
@@ -31,7 +32,7 @@ votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Que
         $scope.select = function (questionId, answerId) {
             console.log(questionId, answerId);
 
-            Answer.save({}, { questionId: questionId, answerId: answerId});
+            Answer.save({talkId: $scope.talkId, questionId: questionId}, {optionId: answerId});
             $scope.selected = answerId;
         }
     }]);

@@ -13,10 +13,8 @@ questionServices.factory('Question', ['$resource',
 
 questionServices.factory('Answer', ['$resource',
     function ($resource) {
-
-        return $resource('api/answer', {}, {
-
-            save: {method: 'POST', isArray: false}
+        return $resource('api/answer/:talkId/:questionId', {}, {
+            save: {method: 'POST' }
         });
     }]);
 
