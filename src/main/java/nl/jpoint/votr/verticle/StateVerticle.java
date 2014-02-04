@@ -30,17 +30,23 @@ public class StateVerticle extends Verticle {
                 Set<String> talks = body.getFieldNames();
                 for (String talk : talks) {
                     JsonObject activeQuestion = body.getObject(talk);
-                    questions.put(talk, activeQuestion.encode());
+                    if (activeQuestion != null) {
+                        questions.put(talk, activeQuestion.encode());
+                    }
                 }
             }
         });
 
-        // mock data
-        JsonObject mockQuestions = new JsonObject();
-        mockQuestions.putObject("devoxx", new Question(1L, "Which talk did you like the most.", "Geen", "Keynote", "Dart", "VertX").asJsonObject());
-        mockQuestions.putObject("JPoint", new Question(2L, "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte").asJsonObject());
-        eb.send(UPDATE_ACTIVE_QUESTION_BUS_ADDRESS, mockQuestions);
+        // Temporarily mock the questions
+        initiallyMockQuestions();
+    }
 
+    private void initiallyMockQuestions() {
+        JsonObject mockQuestions = new JsonObject();
+        mockQuestions.putObject("devoxx", new Question(1L, "Which talk did you like the most.", "None", "Keynote", "Dart", "VertX").asJsonObject());
+        mockQuestions.putObject("JPoint", new Question(2L, "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte").asJsonObject());
+        mockQuestions.putObject("poller", null);
+        vertx.eventBus().send(UPDATE_ACTIVE_QUESTION_BUS_ADDRESS, mockQuestions);
     }
 
 

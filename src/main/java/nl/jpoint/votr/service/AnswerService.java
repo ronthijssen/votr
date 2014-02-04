@@ -10,7 +10,7 @@ import org.vertx.java.platform.Container;
 public class AnswerService {
 
     private Logger log;
-    private Vertx vertx;
+    private Vertx  vertx;
 
     public AnswerService(Vertx vertx, Container container) {
         this.vertx = vertx;
@@ -18,6 +18,9 @@ public class AnswerService {
     }
 
     public void saveAnswer(Answer answer) {
+        log.info(String.format("Saving answer for talk '%s' and question '%d'. Answer value: %d", answer.getTalkId(),
+            answer.getQuestionId(), answer.getOptionId()));
+
         // fire-and-forget.
         JsonObject query = new JsonObject();
         query.putString("action", "saveAnswer");

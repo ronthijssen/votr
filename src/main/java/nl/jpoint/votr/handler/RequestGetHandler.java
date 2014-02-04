@@ -1,10 +1,9 @@
 package nl.jpoint.votr.handler;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import nl.jpoint.votr.model.Question;
 import nl.jpoint.votr.model.QuestionStatus;
+import nl.jpoint.votr.service.QuestionService;
+import org.vertx.java.core.Vertx;
 import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.HttpServerResponse;
 import org.vertx.java.core.json.JsonObject;
@@ -15,17 +14,12 @@ public class RequestGetHandler {
 
     private static int POLLER_COUNTER = 0;
 
-    private final Map<String, Question> questions = new HashMap<>();
-    private final Logger log;
+    private final Logger          log;
+    private final QuestionService questionService;
 
-    public RequestGetHandler(Container container) {
+    public RequestGetHandler(final Vertx vertx, final Container container) {
         this.log = container.logger();
-
-        questions.put("devoxx",
-            new Question(1L, "devoxx", "Which talk did you like the most.", "Geen", "Keynote", "Dart", "VertX"));
-        questions.put("JPoint",
-            new Question(2L, "JPoint", "Favorite coffee?", "Americano", "Espresso", "Cappucino", "Latte"));
-        questions.put("poller", null);
+        this.questionService = new QuestionService(vertx, container);
     }
 
     /**
@@ -33,7 +27,7 @@ public class RequestGetHandler {
      *
      * @param httpRequest the HTTP request.
      */
-    public void handle(HttpServerRequest httpRequest) {
+    public void handle(final HttpServerRequest httpRequest) {
         final String talkId = httpRequest.params().get("talkId");
         if (talkExists(talkId)) {
             respondWithCurrentQuestionForTalk(httpRequest.response(), talkId);
@@ -43,7 +37,7 @@ public class RequestGetHandler {
     }
 
     private boolean talkExists(final String talkId) {
-        return questions.containsKey(talkId);
+        return questionService.isExistingTalk(talkId);
     }
 
     private void respondWithCurrentQuestionForTalk(final HttpServerResponse response, final String talkId) {
@@ -68,7 +62,7 @@ public class RequestGetHandler {
     }
 
     private Question currentQuestionForTalk(final String talkId) {
-        return questions.get(talkId);
+        return questionService.getActiveQuestion(talkId);
     }
 
     private void respondForUnknownTalk(final HttpServerResponse response) {

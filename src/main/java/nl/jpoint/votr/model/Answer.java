@@ -19,6 +19,18 @@ public class Answer {
         return jsonObject;
     }
 
+    public String getTalkId() {
+        return jsonObject.getString("talkId");
+    }
+
+    public long getQuestionId() {
+        return jsonObject.getNumber("questionId").longValue();
+    }
+
+    public int getOptionId() {
+        return jsonObject.getNumber("optionId").intValue();
+    }
+
     public static Answer parseJsonObject(final JsonObject answerObject) {
         return new Answer(answerObject.getString("talkId"), answerObject.getLong("questionId"),
             answerObject.getInteger("optionId"));

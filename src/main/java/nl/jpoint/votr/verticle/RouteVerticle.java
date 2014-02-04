@@ -22,13 +22,13 @@ public class RouteVerticle extends Verticle {
 
         routeMatcher.get("/api/question/:talkId", new Handler<HttpServerRequest>() {
             public void handle(HttpServerRequest req) {
-                new RequestGetHandler(container).handle(req);
+                new RequestGetHandler(vertx, container).handle(req);
             }
         });
 
         routeMatcher.post("/api/answer/:talkId/:questionId", new Handler<HttpServerRequest>() {
             public void handle(final HttpServerRequest req) {
-                req.bodyHandler(new AnswerPostHandler(container, req));
+                req.bodyHandler(new AnswerPostHandler(vertx, container, req));
             }
         });
 

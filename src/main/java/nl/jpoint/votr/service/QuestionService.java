@@ -29,4 +29,9 @@ public class QuestionService {
         return new Question(new JsonObject(activeQuestion));
     }
 
+    public boolean isExistingTalk(String talkId) {
+        final Map<String, String> questions = vertx.sharedData().getMap(StateVerticle.ACTIVE_QUESTION_DATA);
+        return questions.containsKey(talkId);
+    }
+
 }
