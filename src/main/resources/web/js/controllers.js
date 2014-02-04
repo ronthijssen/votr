@@ -9,7 +9,9 @@ votrControllers.controller('QuestionDetailCtrl', ['$scope', '$routeParams', 'Que
             $scope.title = Question.title;
             $scope.options = Question.options;
             $scope.selected = -1;
-        });
+        }), function () {
+            console.log('404')
+        };
 
         $scope.select = function (index) {
             Answer.save({}, { index: index});
