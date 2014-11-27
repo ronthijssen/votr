@@ -14,7 +14,7 @@ import org.vertx.java.platform.Verticle;
 
 public class RouteVerticle extends Verticle {
 
-    public static final int SERVER_PORT = 8080;
+    public static final int SERVER_PORT = 8088;
     public static final String DB_NAME = "testdb";
 
     public void start() {
